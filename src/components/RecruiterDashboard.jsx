@@ -6,6 +6,16 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
   const [salary, setSalary] = useState("");
   const [location, setLocation] = useState("");
 
+  const [editingIndex, setEditingIndex] = useState(null);
+
+  function clearForm() {
+    setTitle("");
+    setCompany("");
+    setSalary("");
+    setLocation("");
+    setEditingIndex(null);
+  }
+
   function postJob() {
     if (
       title.trim() === "" ||
@@ -17,28 +27,56 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
       return;
     }
 
-    const newJob = {
-      title,
-      company,
-      salary,
-      location,
-    };
+    if (editingIndex !== null) {
+      const updatedJobs = [...jobs];
 
-    setJobs([...jobs, newJob]);
+      updatedJobs[editingIndex] = {
+        title,
+        company,
+        salary,
+        location,
+      };
 
-    alert("Job Posted Successfully");
+      setJobs(updatedJobs);
 
-    setTitle("");
-    setCompany("");
-    setSalary("");
-    setLocation("");
+      alert("Job Updated Successfully");
+    } else {
+      const newJob = {
+        title,
+        company,
+        salary,
+        location,
+      };
+
+      setJobs([...jobs, newJob]);
+
+      alert("Job Posted Successfully");
+    }
+
+    clearForm();
+  }
+
+  function deleteJob(index) {
+    const updatedJobs = jobs.filter((_, i) => i !== index);
+
+    setJobs(updatedJobs);
+  }
+
+  function editJob(index) {
+    setTitle(jobs[index].title);
+    setCompany(jobs[index].company);
+    setSalary(jobs[index].salary);
+    setLocation(jobs[index].location);
+
+    setEditingIndex(index);
   }
 
   return (
     <div>
+
       <h1>Recruiter Dashboard</h1>
 
-      <h2>Post New Job</h2>
+      <h2>{editingIndex !== null ? "Edit Job" : "Post New Job"}</h2>
 
       <input
         type="text"
@@ -47,8 +85,7 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
         onChange={(e) => setTitle(e.target.value)}
       />
 
-      <br />
-      <br />
+      <br /><br />
 
       <input
         type="text"
@@ -57,8 +94,7 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
         onChange={(e) => setCompany(e.target.value)}
       />
 
-      <br />
-      <br />
+      <br /><br />
 
       <input
         type="text"
@@ -67,8 +103,7 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
         onChange={(e) => setSalary(e.target.value)}
       />
 
-      <br />
-      <br />
+      <br /><br />
 
       <input
         type="text"
@@ -77,11 +112,14 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
         onChange={(e) => setLocation(e.target.value)}
       />
 
-      <br />
-      <br />
+      <br /><br />
 
       <button onClick={postJob}>
-        Post Job
+        {editingIndex !== null ? "Update Job" : "Post Job"}
+      </button>
+
+      <button onClick={clearForm}>
+        Clear
       </button>
 
       <button onClick={goHome}>
@@ -93,30 +131,41 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
       <h2>All Posted Jobs</h2>
 
       {jobs.map((job, index) => (
+
         <div
           key={index}
           style={{
-            border: "1px solid #ccc",
+            border: "1px solid gray",
             padding: "15px",
             margin: "15px",
-            borderRadius: "8px",
+            borderRadius: "10px",
           }}
         >
+
           <h3>{job.title}</h3>
 
-          <p>
-            <strong>Company:</strong> {job.company}
-          </p>
+          <p><strong>Company:</strong> {job.company}</p>
 
-          <p>
-            <strong>Salary:</strong> {job.salary}
-          </p>
+          <p><strong>Salary:</strong> {job.salary}</p>
 
-          <p>
-            <strong>Location:</strong> {job.location}
-          </p>
+          <p><strong>Location:</strong> {job.location}</p>
+
+          <button
+            onClick={() => editJob(index)}
+          >
+            Edit
+          </button>
+
+          <button
+            onClick={() => deleteJob(index)}
+          >
+            Delete
+          </button>
+
         </div>
+
       ))}
+
     </div>
   );
 }
