@@ -5,7 +5,7 @@ function Candidate({ goHome, loginSuccess }) {
   const [password, setPassword] = useState("");
 
   return (
-    <div>
+    <div className="login-container">
       <h1>Candidate Login</h1>
 
       <input

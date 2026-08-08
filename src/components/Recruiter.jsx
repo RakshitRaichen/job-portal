@@ -5,7 +5,7 @@ function Recruiter({ goHome, loginSuccess }) {
   const [password, setPassword] = useState("");
 
   return (
-    <div>
+    <div className="login-container">
       <h1>Recruiter Login</h1>
 
       <input

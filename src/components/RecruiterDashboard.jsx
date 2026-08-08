@@ -6,6 +6,7 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
   const [salary, setSalary] = useState("");
   const [location, setLocation] = useState("");
 
+  const [search, setSearch] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
 
   function clearForm() {
@@ -71,12 +72,52 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
     setEditingIndex(index);
   }
 
-  return (
-    <div>
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.title.toLowerCase().includes(search.toLowerCase()) ||
+      job.company.toLowerCase().includes(search.toLowerCase()) ||
+      job.location.toLowerCase().includes(search.toLowerCase())
+  );
 
+  return (
+    <div className="dashboard-container">
       <h1>Recruiter Dashboard</h1>
 
-      <h2>{editingIndex !== null ? "Edit Job" : "Post New Job"}</h2>
+      <p>
+        Manage your job postings and find the right candidates.
+      </p>
+
+      {/* Statistics */}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          margin: "30px 0",
+          flexWrap: "wrap",
+        }}
+      >
+        <div className="job-card">
+          <h3>Total Jobs</h3>
+          <h2>{jobs.length}</h2>
+        </div>
+
+        <div className="job-card">
+          <h3>Active Postings</h3>
+          <h2>{jobs.length}</h2>
+        </div>
+      </div>
+
+      <hr />
+
+      {/* Post / Edit Job */}
+
+      <h2>
+        {editingIndex !== null
+          ? "Edit Job"
+          : "Post New Job"}
+      </h2>
 
       <input
         type="text"
@@ -85,7 +126,8 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
         onChange={(e) => setTitle(e.target.value)}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
       <input
         type="text"
@@ -94,7 +136,8 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
         onChange={(e) => setCompany(e.target.value)}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
       <input
         type="text"
@@ -103,7 +146,8 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
         onChange={(e) => setSalary(e.target.value)}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
       <input
         type="text"
@@ -112,60 +156,92 @@ function RecruiterDashboard({ goHome, jobs, setJobs }) {
         onChange={(e) => setLocation(e.target.value)}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
       <button onClick={postJob}>
-        {editingIndex !== null ? "Update Job" : "Post Job"}
+        {editingIndex !== null
+          ? "Update Job"
+          : "Post Job"}
       </button>
 
       <button onClick={clearForm}>
         Clear
       </button>
 
+      <hr />
+
+      {/* Search */}
+
+      <h2>Manage Jobs</h2>
+
+      <input
+        type="text"
+        placeholder="Search jobs, companies or locations..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <h3>
+        {filteredJobs.length} Jobs Found
+      </h3>
+
+      {/* Job List */}
+
+      {filteredJobs.length === 0 && (
+        <p>No jobs found.</p>
+      )}
+
+      {filteredJobs.map((job) => {
+        const originalIndex = jobs.indexOf(job);
+
+        return (
+          <div
+            key={originalIndex}
+            className="job-card"
+          >
+            <h3>{job.title}</h3>
+
+            <p>
+              <strong>Company:</strong>{" "}
+              {job.company}
+            </p>
+
+            <p>
+              <strong>Salary:</strong>{" "}
+              {job.salary}
+            </p>
+
+            <p>
+              <strong>Location:</strong>{" "}
+              {job.location}
+            </p>
+
+            <button
+              onClick={() =>
+                editJob(originalIndex)
+              }
+            >
+              Edit
+            </button>
+
+            <button
+              onClick={() =>
+                deleteJob(originalIndex)
+              }
+              style={{
+                background: "crimson",
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        );
+      })}
+
       <button onClick={goHome}>
         Logout
       </button>
-
-      <hr />
-
-      <h2>All Posted Jobs</h2>
-
-      {jobs.map((job, index) => (
-
-        <div
-          key={index}
-          style={{
-            border: "1px solid gray",
-            padding: "15px",
-            margin: "15px",
-            borderRadius: "10px",
-          }}
-        >
-
-          <h3>{job.title}</h3>
-
-          <p><strong>Company:</strong> {job.company}</p>
-
-          <p><strong>Salary:</strong> {job.salary}</p>
-
-          <p><strong>Location:</strong> {job.location}</p>
-
-          <button
-            onClick={() => editJob(index)}
-          >
-            Edit
-          </button>
-
-          <button
-            onClick={() => deleteJob(index)}
-          >
-            Delete
-          </button>
-
-        </div>
-
-      ))}
-
     </div>
   );
 }

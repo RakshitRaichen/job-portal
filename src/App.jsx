@@ -1,15 +1,16 @@
+import "./App.css";
 import { useState } from "react";
 import Home from "./components/Home";
 import Candidate from "./components/Candidate";
 import Recruiter from "./components/Recruiter";
 import CandidateDashboard from "./components/CandidateDashboard";
 import RecruiterDashboard from "./components/RecruiterDashboard";
+import CandidateProfile from "./components/CandidateProfile";
 
 function App() {
   const [page, setPage] = useState("home");
 
   const [jobs, setJobs] = useState([
-    
     {
       title: "React Developer",
       company: "Google",
@@ -56,13 +57,22 @@ function App() {
         <CandidateDashboard
           goHome={() => setPage("home")}
           jobs={jobs}
+          goProfile={() => setPage("profile")}
+        />
+      )}
+
+      {page === "profile" && (
+        <CandidateProfile
+          goBack={() => setPage("dashboard")}
         />
       )}
 
       {page === "recruiter" && (
         <Recruiter
           goHome={() => setPage("home")}
-          loginSuccess={() => setPage("recruiterDashboard")}
+          loginSuccess={() =>
+            setPage("recruiterDashboard")
+          }
         />
       )}
 
